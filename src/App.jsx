@@ -1,40 +1,57 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
-import ConversationalResearch from "./pages/ConversationalResearch";
+import Dashboard from "./pages/Dashboard";
+import WorkspaceDirectory from "./pages/WorkspaceDirectory";
+import SessionDetails from "./pages/SessionDetails";
+import CreateSession from "./pages/CreateSession";
 import DocumentLibrary from "./pages/DocumentLibrary";
+import ConversationalResearch from "./pages/ConversationalResearch";
+import ResearchWorkspace from "./pages/ResearchWorkspace";
 import ReportView from "./pages/ReportView";
+import OrchestrationView from "./pages/OrchestrationView";
 import UploadDocumentModal from "./components/UploadDocumentModal";
+import CreateSessionModal from "./components/CreateSessionModal";
 import { INITIAL_SESSIONS } from "./data/seedData";
 import { INITIAL_DOCUMENTS } from "./data/documentData";
 import "./index.css";
 
+function normalizePageName(page) {
+  if (!page) return "Dashboard";
+  const p = page.toLowerCase();
+  if (p === "dashboard") return "Dashboard";
+  if (p.includes("session") || p.includes("workspace") || p.includes("directory")) return "Sessions";
+  if (p.includes("doc") || p.includes("upload") || p.includes("knowledge")) return "Documents";
+  if (p.includes("research") || p.includes("query") || p.includes("chat")) return "Research";
+  if (p.includes("analysis") || p.includes("extract") || p.includes("flag") || p.includes("compare")) return "Analysis";
+  if (p.includes("report")) return "Reports";
+  if (p.includes("setting") || p.includes("orchestrat") || p.includes("agent") || p.includes("system")) return "Settings";
+  return "Dashboard";
+}
+
 export default function App() {
   const [theme, setTheme] = useState(
-    () => localStorage.getItem("finresearch_theme") || "light"
+    () => localStorage.getItem("finresearch_theme") || "dark"
   );
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
-  // Active page: "Research" | "Documents" | "Reports"
+  // Active top-level page
   const [activePage, setActivePage] = useState(() => {
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const qPage = urlParams.get("page");
-      if (qPage) {
-        if (qPage === "Documents" || qPage === "Document Library" || qPage === "Upload Document") return "Documents";
-        if (qPage === "Reports" || qPage === "Research Reports" || qPage === "Analyst Report") return "Reports";
-        return "Research";
-      }
+      if (qPage) return normalizePageName(qPage);
       const stored = localStorage.getItem("finresearch_active_page");
-      if (stored) {
-        if (stored === "Documents" || stored === "Document Library" || stored === "Upload Document") return "Documents";
-        if (stored === "Reports" || stored === "Research Reports" || stored === "Analyst Report") return "Reports";
-        return "Research";
-      }
+      if (stored) return normalizePageName(stored);
     } catch {}
-    return "Research";
+    return "Dashboard";
   });
+
+  // Subview states for multi-view pages
+  const [sessionSubView, setSessionSubView] = useState("directory"); // "directory" | "details" | "create"
+  const [documentSubView, setDocumentSubView] = useState("library"); // "library" | "upload" | "details"
 
   function toggleTheme() {
     setTheme((currentTheme) => {
@@ -48,7 +65,7 @@ export default function App() {
     setSidebarCollapsed((prev) => !prev);
   }
 
-  // Sessions state (default to INITIAL_SESSIONS so user immediately has research targets)
+  // Sessions state
   const [sessions, setSessions] = useState(() => {
     try {
       const stored = localStorage.getItem("finresearch_sessions");
@@ -72,7 +89,7 @@ export default function App() {
     return sessions.length > 0 ? sessions[0] : INITIAL_SESSIONS[0];
   });
 
-  // Documents state (default to INITIAL_DOCUMENTS so user has files to query)
+  // Documents state
   const [documents, setDocuments] = useState(() => {
     try {
       const raw = localStorage.getItem("finresearch_documents_v2");
@@ -112,9 +129,7 @@ export default function App() {
         const urlParams = new URLSearchParams(window.location.search);
         const qPage = urlParams.get("page");
         if (qPage) {
-          if (qPage === "Documents" || qPage === "Document Library") setActivePage("Documents");
-          else if (qPage === "Reports" || qPage === "Research Reports") setActivePage("Reports");
-          else setActivePage("Research");
+          setActivePage(normalizePageName(qPage));
         }
       } catch {}
     }
@@ -122,17 +137,27 @@ export default function App() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  function navigateTo(page) {
-    let target = "Research";
-    if (page === "Documents" || page === "Document Library" || page === "Upload Document") {
-      target = "Documents";
-    } else if (page === "Reports" || page === "Research Reports" || page === "Analyst Report") {
-      target = "Reports";
-    } else {
-      target = "Research";
+  function navigateTo(page, subview) {
+    const target = normalizePageName(page);
+    setActivePage(target);
+
+    // Track subviews
+    if (page === "Create Session" || subview === "create") {
+      setSessionSubView("create");
+    } else if (page === "Session Details" || subview === "details") {
+      setSessionSubView("details");
+    } else if (target === "Sessions") {
+      if (subview) setSessionSubView(subview);
+      else setSessionSubView("directory");
     }
 
-    setActivePage(target);
+    if (page === "Upload Document" || subview === "upload") {
+      setDocumentSubView("upload");
+    } else if (target === "Documents") {
+      if (subview) setDocumentSubView(subview);
+      else setDocumentSubView("library");
+    }
+
     try {
       localStorage.setItem("finresearch_active_page", target);
       const url = new URL(window.location.href);
@@ -141,9 +166,47 @@ export default function App() {
     } catch {}
   }
 
+  // Session CRUD Handlers
+  function handleCreateSession(newSession) {
+    const updated = [newSession, ...sessions];
+    saveSessions(updated);
+    setActiveSession(newSession);
+    setSessionSubView("details");
+  }
+
+  function handleUpdateSession(updatedSession) {
+    const updated = sessions.map((s) => (s.id === updatedSession.id ? updatedSession : s));
+    saveSessions(updated);
+    if (activeSession?.id === updatedSession.id) {
+      setActiveSession(updatedSession);
+    }
+  }
+
+  function handleDuplicateSession(sessionToDup) {
+    const duplicated = {
+      ...sessionToDup,
+      id: crypto.randomUUID(),
+      title: `${sessionToDup.title} (Copy)`,
+      createdAt: new Date().toLocaleDateString()
+    };
+    const updated = [duplicated, ...sessions];
+    saveSessions(updated);
+    setActiveSession(duplicated);
+    setSessionSubView("details");
+  }
+
+  function handleDeleteSession(sessionId) {
+    const updated = sessions.filter((s) => s.id !== sessionId);
+    saveSessions(updated);
+    if (activeSession?.id === sessionId) {
+      setActiveSession(updated[0] || null);
+    }
+    setSessionSubView("directory");
+  }
+
   return (
     <div className={`app-layout ${sidebarCollapsed ? "sidebar-is-collapsed" : ""}`} data-theme={theme}>
-      {/* Sleek Minimal 3-Section Sidebar */}
+      {/* Sleek Minimal 7-Item Sidebar */}
       <Sidebar
         activePage={activePage}
         setPage={navigateTo}
@@ -152,7 +215,7 @@ export default function App() {
       />
 
       <main className="main-content">
-        {/* Clean, Serene Top Header */}
+        {/* Clean, Disciplined Top Header */}
         <Header
           theme={theme}
           toggleTheme={toggleTheme}
@@ -165,24 +228,72 @@ export default function App() {
         />
 
         <div className="page-container">
-          {/* Section 1: AI Conversational Research */}
-          {activePage === "Research" && (
-            <ConversationalResearch
-              session={activeSession}
+          {/* Module 1: Dashboard */}
+          {activePage === "Dashboard" && (
+            <Dashboard
               sessions={sessions}
-              setActiveSession={setActiveSession}
+              documents={documents}
               setPage={navigateTo}
+              setActiveSession={setActiveSession}
+              onDeleteSession={handleDeleteSession}
+              onOpenUploadModal={() => setUploadModalOpen(true)}
+              onOpenCreateModal={() => setCreateModalOpen(true)}
             />
           )}
 
-          {/* Section 2: Financial Documents */}
+          {/* Module 2: Research Sessions (Directory, Details, Create) */}
+          {activePage === "Sessions" && (
+            <>
+              {sessionSubView === "create" ? (
+                <CreateSession
+                  onCreateSession={handleCreateSession}
+                  onCancel={() => setSessionSubView("directory")}
+                />
+              ) : sessionSubView === "details" && activeSession ? (
+                <SessionDetails
+                  session={activeSession}
+                  onBack={() => setSessionSubView("directory")}
+                  onUpdateSession={handleUpdateSession}
+                  onDuplicateSession={handleDuplicateSession}
+                  onDeleteSession={handleDeleteSession}
+                  onLaunchInteractive={() => navigateTo("Research")}
+                  onNavigateToReports={() => navigateTo("Reports")}
+                  onNavigateToDocs={() => navigateTo("Documents")}
+                />
+              ) : (
+                <WorkspaceDirectory
+                  sessions={sessions}
+                  activeSession={activeSession}
+                  onSelectSession={(s) => {
+                    setActiveSession(s);
+                    setSessionSubView("details");
+                  }}
+                  onViewSessionDetails={(s) => {
+                    setActiveSession(s);
+                    setSessionSubView("details");
+                  }}
+                  onLaunchInteractive={(s) => {
+                    setActiveSession(s);
+                    navigateTo("Research");
+                  }}
+                  onOpenCreateModal={() => setCreateModalOpen(true)}
+                  onDuplicateSession={handleDuplicateSession}
+                  onDeleteSession={handleDeleteSession}
+                />
+              )}
+            </>
+          )}
+
+          {/* Module 3: Financial Documents (Library, Upload, Search) */}
           {activePage === "Documents" && (
             <DocumentLibrary
+              documents={documents}
+              onUpdateDocuments={saveDocuments}
               sessions={sessions}
               activeSession={activeSession}
               setActiveSession={setActiveSession}
               setPage={navigateTo}
-              initialSubView="library"
+              initialSubView={documentSubView}
               onOpenDocumentSession={(companyKey) => {
                 const s = sessions.find((ses) => ses.companyIds?.includes(companyKey));
                 if (s) {
@@ -193,7 +304,34 @@ export default function App() {
             />
           )}
 
-          {/* Section 3: Executive Reports */}
+          {/* Module 4: AI Research (Conversational Query & Grounded Citations) */}
+          {activePage === "Research" && (
+            <ConversationalResearch
+              documents={documents}
+              session={activeSession}
+              sessions={sessions}
+              setActiveSession={setActiveSession}
+              setPage={navigateTo}
+            />
+          )}
+
+          {/* Module 5: Financial Analysis (Extraction, Red Flags, Peer Comparison) */}
+          {activePage === "Analysis" && (
+            <ResearchWorkspace
+              documents={documents}
+              session={activeSession}
+              sessions={sessions}
+              setActiveSession={setActiveSession}
+              setPage={navigateTo}
+              initialMode="interactive"
+              onUpdateSession={handleUpdateSession}
+              onDuplicateSession={handleDuplicateSession}
+              onDeleteSession={handleDeleteSession}
+              onOpenCreateModal={() => setCreateModalOpen(true)}
+            />
+          )}
+
+          {/* Module 6: Executive Reports (Library, Preview, PDF Export) */}
           {activePage === "Reports" && (
             <ReportView
               session={activeSession}
@@ -202,15 +340,35 @@ export default function App() {
               onBack={() => navigateTo("Research")}
             />
           )}
+
+          {/* Module 7: Multi-Agent System & Orchestration Diagnostics */}
+          {activePage === "Settings" && (
+            <OrchestrationView
+              sessions={sessions}
+              activeSession={activeSession}
+              setActiveSession={setActiveSession}
+              setPage={navigateTo}
+            />
+          )}
         </div>
       </main>
 
-      {/* Lightweight Upload Modal */}
+      {/* Lightweight Upload Filing Modal */}
       <UploadDocumentModal
         open={uploadModalOpen}
         onClose={() => setUploadModalOpen(false)}
         onUploadSuccess={(doc) => {
           saveDocuments([doc, ...documents]);
+        }}
+      />
+
+      {/* Lightweight Create Session Modal */}
+      <CreateSessionModal
+        open={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        onCreateSession={(newSession) => {
+          handleCreateSession(newSession);
+          setCreateModalOpen(false);
         }}
       />
     </div>

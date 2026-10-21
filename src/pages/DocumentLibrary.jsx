@@ -23,7 +23,8 @@ import {
   X,
   FileCheck2,
   Plus,
-  Bot
+  Bot,
+  Database
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import Badge from "../components/ui/Badge";
@@ -47,9 +48,12 @@ import {
 import { SEED_COMPANIES } from "../data/seedData";
 import UploadDocument from "./UploadDocument";
 import DocumentDetails from "./DocumentDetails";
+import KnowledgeBase from "./KnowledgeBase";
 import DocumentViewer from "../components/DocumentViewer";
 
 export default function DocumentLibrary({
+  documents: initialDocumentsProp,
+  onUpdateDocuments,
   sessions = [],
   activeSession,
   setActiveSession,
@@ -58,7 +62,12 @@ export default function DocumentLibrary({
   initialSubView = "library"
 }) {
   const [subView, setSubView] = useState(initialSubView); // "library" | "upload" | "details"
-  const [documents, setDocuments] = useState(() => getStoredDocuments());
+  const [documents, setDocuments] = useState(() => {
+    if (Array.isArray(initialDocumentsProp) && initialDocumentsProp.length > 0) {
+      return initialDocumentsProp;
+    }
+    return getStoredDocuments();
+  });
   const [selectedDocId, setSelectedDocId] = useState(null);
 
   // Filters & Search State
@@ -73,10 +82,20 @@ export default function DocumentLibrary({
   const [quickPreviewDoc, setQuickPreviewDoc] = useState(null);
   const [docToDelete, setDocToDelete] = useState(null);
 
-  // Sync state to localStorage whenever documents change
+  // Sync state to parent and localStorage whenever documents change
   useEffect(() => {
     saveStoredDocuments(documents);
+    if (onUpdateDocuments) {
+      onUpdateDocuments(documents);
+    }
   }, [documents]);
+
+  // Sync from props if parent documents update
+  useEffect(() => {
+    if (Array.isArray(initialDocumentsProp) && initialDocumentsProp.length > 0) {
+      setDocuments(initialDocumentsProp);
+    }
+  }, [initialDocumentsProp]);
 
   const selectedDocument = useMemo(() => {
     return documents.find((d) => d.id === selectedDocId) || documents[0];
@@ -214,31 +233,76 @@ export default function DocumentLibrary({
     );
   }
 
+  // Subview 4: Knowledge Base / Vector Search
+  if (subView === "search" || subView === "knowledge_base") {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-subtle">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="fin-btn fin-btn-secondary fin-btn-xs"
+              onClick={() => setSubView("library")}
+            >
+              ← Back to Filing Library
+            </button>
+            <span className="text-xs text-muted">|</span>
+            <span className="text-xs font-semibold text-main">Vector Search & Embedding Sandbox</span>
+          </div>
+        </div>
+        <KnowledgeBase
+          sessions={sessions}
+          activeSession={activeSession}
+          setActiveSession={setActiveSession}
+          setPage={setPage}
+        />
+      </div>
+    );
+  }
+
   // Default: Page 1 — Document Library (Financial Documents)
   return (
     <section className="page fin-document-library-page animate-fadeIn space-y-6">
-      {/* Page Title & Main Header */}
-      <div className="flex-row items-center justify-between pb-4 border-b border-subtle">
-        <div>
-          <span className="eyebrow text-accent font-mono">
-            MODULE 2: FINANCIAL DOCUMENT INGESTION & PARSING
-          </span>
-          <h1 className="text-2xl font-bold text-main mt-0.5">Financial Documents</h1>
-          <p className="text-xs text-muted max-w-2xl mt-1 leading-relaxed">
-            Institutional corporate filings, Form 10-Ks, audited annual reports, and earnings transcripts.
-            Parsed with OCR table extraction and indexed into 1536-dimensional vector embeddings for strict citation grounding.
-          </p>
-        </div>
-
-        <div className="flex-row items-center gap-2">
-          <Button
-            variant="primary"
-            size="md"
-            icon={UploadCloud}
+      {/* Clean Sub-navigation & Actions Bar */}
+      <div className="flex items-center justify-between pb-4 border-b border-subtle flex-wrap gap-3">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className={`fin-btn fin-btn-xs ${subView === "library" ? "fin-btn-primary" : "fin-btn-secondary"}`}
+            onClick={() => setSubView("library")}
+          >
+            <FileText size={13} className="mr-1" />
+            <span>Filing Library ({documents.length})</span>
+          </button>
+          <button
+            type="button"
+            className="fin-btn fin-btn-secondary fin-btn-xs"
             onClick={() => setSubView("upload")}
           >
-            Upload Document
-          </Button>
+            <UploadCloud size={13} className="mr-1 text-teal" />
+            <span>Upload Filing</span>
+          </button>
+          <button
+            type="button"
+            className="fin-btn fin-btn-secondary fin-btn-xs"
+            onClick={() => setSubView("search")}
+          >
+            <Database size={13} className="mr-1 text-muted" />
+            <span>Vector Search Index</span>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {setPage && (
+            <Button
+              variant="secondary"
+              size="xs"
+              icon={Bot}
+              onClick={() => setPage("AI Research")}
+            >
+              Ask in AI Research
+            </Button>
+          )}
         </div>
       </div>
 

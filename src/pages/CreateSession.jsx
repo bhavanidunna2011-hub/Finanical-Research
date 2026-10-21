@@ -116,20 +116,26 @@ export default function CreateSession({ onCreateSession, onCancel }) {
   }
 
   return (
-    <section className="page create-session-page animate-fadeIn">
+    <section className="page create-session-page animate-fadeIn max-w-4xl mx-auto space-y-6">
       {/* Page Header */}
-      <div className="section-header-box">
-        <span className="eyebrow">MODULE 1 • SESSION INITIALIZATION</span>
-        <h1>Create Research Session</h1>
-        <p className="muted">
-          Configure a dedicated multi-agent research session with target financial filings, analytical objectives, and grounding compliance.
-        </p>
+      <div className="flex items-center justify-between pb-4 border-b border-subtle">
+        <div>
+          <h1 className="text-xl font-bold text-main">New Research Session</h1>
+          <p className="text-xs text-muted mt-0.5">
+            Configure target entities, research scope, and analytical objectives.
+          </p>
+        </div>
+        {onCancel && (
+          <Button variant="secondary" size="xs" onClick={onCancel}>
+            Cancel
+          </Button>
+        )}
       </div>
 
       {/* Preset Quick Start Templates */}
-      <div className="preset-templates-container mt-6">
-        <span className="text-xs font-bold uppercase tracking-wider text-muted">
-          RECOMMENDED INSTITUTIONAL TEMPLATES
+      <div className="preset-templates-container">
+        <span className="text-xs font-semibold text-muted">
+          Quick-Start Templates
         </span>
         <div className="presets-grid mt-2">
           <div

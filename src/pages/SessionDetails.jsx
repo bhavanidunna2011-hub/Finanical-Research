@@ -162,29 +162,29 @@ export default function SessionDetails({
   return (
     <div className="fin-session-details-page animate-fadeIn">
       {/* Top Navigation & Breadcrumb */}
-      <div className="details-header-nav">
+      <div className="details-header-nav flex items-center justify-between pb-3 border-b border-subtle flex-wrap gap-3">
         <button
           type="button"
-          className="details-back-link"
+          className="details-back-link flex items-center gap-1.5 text-xs text-muted hover:text-main"
           onClick={onBack}
         >
-          <ArrowLeft size={15} />
-          <span>Back to Research Workspace</span>
+          <ArrowLeft size={14} />
+          <span>Back to Research Sessions</span>
         </button>
 
-        <div className="flex-row items-center gap-2">
+        <div className="flex items-center gap-2">
           <Button
-            variant="outline"
-            size="sm"
+            variant="secondary"
+            size="xs"
             icon={Edit3}
             onClick={handleOpenEdit}
           >
-            Edit Metadata
+            Edit
           </Button>
 
           <Button
-            variant="outline"
-            size="sm"
+            variant="secondary"
+            size="xs"
             icon={Copy}
             onClick={() => onDuplicateSession(session.id)}
           >
@@ -192,22 +192,22 @@ export default function SessionDetails({
           </Button>
 
           <Button
-            variant="danger"
-            size="sm"
+            variant="secondary"
+            size="xs"
             icon={Trash2}
+            className="text-danger hover:border-danger/30"
             onClick={() => setDeleteModalOpen(true)}
           >
             Delete
           </Button>
 
           <Button
-            variant="teal"
-            size="sm"
-            icon={ArrowRight}
-            iconPosition="right"
+            variant="primary"
+            size="xs"
+            icon={Bot}
             onClick={() => onLaunchInteractive(session)}
           >
-            Launch Interactive Workspace
+            Ask in AI Research
           </Button>
         </div>
       </div>
@@ -251,7 +251,7 @@ export default function SessionDetails({
             <div className="meta-item mt-2">
               <span className="text-xs text-muted">Grounding Standard</span>
               <span className="text-xs text-teal font-semibold flex-row items-center gap-1">
-                <ShieldCheck size={12} /> 100% SEC/IFRS Strict
+                <ShieldCheck size={12} /> Audited SEC/IFRS Disclosures
               </span>
             </div>
           </div>

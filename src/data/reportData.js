@@ -201,7 +201,7 @@ export function generateStructuredReportContent(report) {
           ["Diluted Earnings Per Share", primary.metrics.dilutedEPS, ...(isMulti ? [secondary.metrics.dilutedEPS] : []), "EPS Expansion", `${primary.filingDocName}, p. 112`],
           ["Free Cash Flow", primary.metrics.freeCashFlow, ...(isMulti ? [secondary.metrics.freeCashFlow] : []), ">80% PAT Conversion", `${primary.filingDocName}, p. 116`],
           ["Return on Equity (ROE)", primary.metrics.roe, ...(isMulti ? [secondary.metrics.roe] : []), ">25.0%", `${primary.filingDocName}, p. 145`],
-          ["Balance Sheet Debt", primary.metrics.totalDebt, ...(isMulti ? [secondary.metrics.totalDebt] : []), "Zero Debt / AAA", `${primary.filingDocName}, p. 114`],
+          ["Balance Sheet Debt", primary.metrics.totalDebt, ...(isMulti ? [secondary.metrics.totalDebt] : []), "Zero Debt / Net Cash", `${primary.filingDocName}, p. 114`],
           ["Cash & Liquid Reserves", primary.metrics.cashEquivalents, ...(isMulti ? [secondary.metrics.cashEquivalents] : []), ">15% Revenue", `${primary.filingDocName}, p. 114`]
         ]
       },
@@ -253,7 +253,7 @@ export function generateStructuredReportContent(report) {
         ["Return on Equity (ROE)", primary.metrics.roe, secondary.metrics.roe, "+1,970 bps spread", `${secondary.ticker} (Asset-Light Compounding)`],
         ["Free Cash Flow Conversion", primary.metrics.fcfConversion, secondary.metrics.fcfConversion, "+390 bps spread", `${secondary.ticker} (Accelerated Cash Cycle)`],
         ["Deal TCV Pipeline", primary.metrics.dealTCV, secondary.metrics.dealTCV, "2.4x order book spread", `${secondary.ticker} (Record Enterprise Mega-deals)`],
-        ["Balance Sheet Solvency", "Zero Debt (Net Cash)", "Zero Debt (Net Cash)", "Parity", "Both Entities (Pristine AAA Health)"]
+        ["Balance Sheet Solvency", "Zero Debt (Net Cash)", "Zero Debt (Net Cash)", "Parity", "Both Entities (Debt-Free Net Cash Position)"]
       ]
     } : null,
     outlook: {

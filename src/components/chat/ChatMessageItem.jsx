@@ -22,7 +22,7 @@ export default function ChatMessageItem({
   onCitationClick,
   onViewDocument
 }) {
-  const [reasoningExpanded, setReasoningExpanded] = useState(true);
+  const [reasoningExpanded, setReasoningExpanded] = useState(false);
   const [excerptsExpanded, setExcerptsExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -34,7 +34,7 @@ export default function ChatMessageItem({
     return (
       <div className="fin-chat-system-message">
         <div className="system-message-card">
-          <ShieldCheck size={16} className="text-teal" />
+          <ShieldCheck size={15} className="text-teal" />
           <p className="text-xs">{message.content}</p>
         </div>
       </div>
@@ -45,7 +45,7 @@ export default function ChatMessageItem({
   function handleCopy() {
     let copyText = message.content || "";
     if (message.conciseAnswer) {
-      copyText = `### Financial Research Synthesis\n\n${message.conciseAnswer}\n\n`;
+      copyText = `${message.conciseAnswer}\n\n`;
       if (message.metricsTable) {
         copyText += `Table: ${message.metricsTable.title}\n`;
         copyText += message.metricsTable.headers.join(" | ") + "\n";
@@ -55,7 +55,7 @@ export default function ChatMessageItem({
         copyText += "\n";
       }
       if (message.supportingEvidence) {
-        copyText += `Supporting Evidence:\n`;
+        copyText += `Supporting Observations:\n`;
         message.supportingEvidence.forEach((e) => {
           copyText += `• ${e}\n`;
         });
@@ -71,18 +71,9 @@ export default function ChatMessageItem({
     try {
       if (navigator?.clipboard?.writeText) {
         navigator.clipboard.writeText(copyText);
-      } else {
-        const ta = document.createElement("textarea");
-        ta.value = copyText;
-        ta.style.position = "fixed";
-        ta.style.opacity = "0";
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
       }
       setCopied(true);
-      setTimeout(() => setCopied(false), 2200);
+      setTimeout(() => setCopied(false), 2000);
     } catch (e) {
       console.warn("Copy error", e);
     }
@@ -94,11 +85,11 @@ export default function ChatMessageItem({
       <div className="fin-chat-avatar">
         {isUser ? (
           <div className="avatar-box user-avatar">
-            <User size={16} />
+            <User size={15} />
           </div>
         ) : (
           <div className="avatar-box assistant-avatar">
-            <Bot size={18} />
+            <Bot size={17} />
           </div>
         )}
       </div>
@@ -109,17 +100,12 @@ export default function ChatMessageItem({
         <div className="fin-chat-bubble-header">
           <div className="flex-row items-center gap-2">
             <strong className="chat-sender-name">
-              {isUser ? "You (Senior Analyst)" : "Financial Research Agent"}
+              {isUser ? "Analyst" : "AI Research"}
             </strong>
-            {!isUser && (
+            {!isUser && message.citations && message.citations.length > 0 && (
               <span className="fin-badge fin-badge-teal fin-badge-xs">
                 <ShieldCheck size={11} className="mr-1" />
-                Grounded Vector RAG
-              </span>
-            )}
-            {message.isDemo && (
-              <span className="fin-badge fin-badge-purple fin-badge-xs">
-                Simulated Telemetry
+                {message.citations.length} Sources Cited
               </span>
             )}
           </div>
@@ -131,7 +117,7 @@ export default function ChatMessageItem({
                 type="button"
                 className="chat-action-btn"
                 onClick={handleCopy}
-                title="Copy structured response"
+                title="Copy answer to clipboard"
               >
                 {copied ? (
                   <>
@@ -162,10 +148,6 @@ export default function ChatMessageItem({
             {/* 1. Concise Answer */}
             {message.conciseAnswer && (
               <div className="concise-answer-box">
-                <div className="answer-eyebrow">
-                  <Sparkles size={13} className="text-accent" />
-                  <span>Executive Synthesis</span>
-                </div>
                 <p className="concise-answer-text">{message.conciseAnswer}</p>
               </div>
             )}

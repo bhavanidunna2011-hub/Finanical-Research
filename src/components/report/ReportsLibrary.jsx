@@ -100,13 +100,12 @@ export default function ReportsLibrary({
             <FileCheck2 size={22} className="text-teal" />
           </div>
           <div>
-            <div className="flex-row items-center gap-2">
+            <div className="flex items-center gap-2">
               <h1 className="text-xl font-bold text-main leading-tight">Research Reports</h1>
-              <span className="fin-badge fin-badge-teal fin-badge-xs">Module 6</span>
-              <span className="fin-badge fin-badge-purple fin-badge-xs">Report Agent</span>
+              <span className="fin-badge fin-badge-teal fin-badge-xs">Report Agent</span>
             </div>
             <p className="text-xs text-muted mt-0.5">
-              Publication-ready equity research dossiers • Multi-agent synthesis • Client-side print & PDF export
+              Structured equity research dossiers with cited disclosures and PDF export
             </p>
           </div>
         </div>

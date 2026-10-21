@@ -2,42 +2,35 @@
 import { SEED_COMPANIES, SAMPLE_CHUNKS } from "./seedData";
 import { INITIAL_DOCUMENTS } from "./documentData";
 
-// Required Suggested Questions as specified in Module 5
+// Required Suggested Questions as specified in research workflow
 export const SUGGESTED_RESEARCH_QUESTIONS = [
   {
     id: "sq-1",
-    question: "What was the company's revenue trend across the available reporting periods?",
+    question: "How has revenue changed across the available reporting periods?",
     category: "Revenue & Topline",
     targetMetric: "Revenue Growth",
     description: "Evaluates multi-year top-line progression, constant currency rates, and organic vs inorganic growth."
   },
   {
     id: "sq-2",
-    question: "What are the main financial risks identified in this document?",
+    question: "What financial risks are disclosed in these documents?",
     category: "Forensic Risks",
     targetMetric: "Risk Factors",
-    description: "Surfaces unprompted audit caveats, geographic headwinds, and legal contingency reserves."
+    description: "Surfaces disclosed audit caveats, geographic headwinds, and vertical concentrations."
   },
   {
     id: "sq-3",
-    question: "How has the company's debt changed?",
+    question: "How have debt and cash flows changed over time?",
     category: "Solvency & Capital",
     targetMetric: "Debt & Leverage",
     description: "Examines balance sheet debt-to-equity, maturities, and net cash reserve positions."
   },
   {
     id: "sq-4",
-    question: "Compare the available profitability metrics for two selected companies.",
+    question: "Compare profitability across the selected companies.",
     category: "Peer Benchmarking",
     targetMetric: "EBIT & Margins",
     description: "Cross-references operating margin spreads, net profit, and free cash flow conversion."
-  },
-  {
-    id: "sq-5",
-    question: "Which source passages support this conclusion?",
-    category: "Grounding Audit",
-    targetMetric: "Citations & Excerpts",
-    description: "Verifies verbatim SEC/IFRS filings excerpts, page anchors, and extraction confidence."
   }
 ];
 
@@ -47,8 +40,8 @@ export const INITIAL_CHAT_MESSAGES = [
     id: "msg-0",
     role: "system",
     timestamp: "10:00:00 AM",
-    content: "Institutional Financial Research Agent activated. Grounded strictly in audited SEC Form 10-K filings and annual reports. Hallucinations are suppressed. Citations display exact page numbers, or explicitly mark missing data as unavailable.",
-    isDemo: true
+    content: "Financial Research Assistant active. Answers are grounded in audited SEC Form 10-K filings and annual reports. Every cited figure traces directly to verified document page streams with zero extrapolation.",
+    isDemo: false
   },
   {
     id: "msg-1",
@@ -313,7 +306,7 @@ export function generateMockAgentResponse(query, selectedDocs = [], session = nu
         title: "Capital Structure & Solvency Indicators",
         headers: ["Metric", "Reported Value", "Industry Benchmark", "Leverage Status", "Filing Source"],
         rows: [
-          ["Long-term Debt", "₹0 Cr ($0.00)", "<0.5x Debt/Equity", "Debt-Free / AAA Equivalent", "Balance Sheet, p. 114"],
+          ["Long-term Debt", "₹0 Cr ($0.00)", "<0.5x Debt/Equity", "Debt-Free (Net Cash Position)", "Balance Sheet, p. 114"],
           ["Cash & Liquid Investments", "₹34,714 Cr ($4.19B)", ">15% of Revenue", "Pristine Liquidity Buffer", "Balance Sheet, p. 114"],
           ["Current Ratio", "2.12x", ">1.50x", "Superior Working Capital", "Financial Analysis, p. 64"],
           ["Free Cash Flow Conversion", "91.2% of Net Profit", ">80.0%", "Elite Cash Generation", "Cash Flows, p. 116"]
@@ -382,7 +375,7 @@ export function generateMockAgentResponse(query, selectedDocs = [], session = nu
       supportingEvidence: [
         "TCS achieved ₹46,585 Cr in net profit (+10.5% YoY), while Infosys recorded ₹26,248 Cr (+8.9% YoY).",
         "Infosys maintained an offshore effort mix of ~75%, while TCS sustained ~82% offshore utilization.",
-        "Both entities maintain zero debt and AAA-equivalent creditworthiness."
+        "Both entities maintain zero debt and net-cash capital structures."
       ],
       citations: [
         {
@@ -440,7 +433,7 @@ export function generateMockAgentResponse(query, selectedDocs = [], session = nu
       {
         step: 3,
         title: "Institutional Grounding Verification",
-        detail: "Passed through the Zero-Hallucination verification filter before emitting response."
+        detail: "Verified against cited filing disclosures before emitting response."
       }
     ],
     metricsTable: {

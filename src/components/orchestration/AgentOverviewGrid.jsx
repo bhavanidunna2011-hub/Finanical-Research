@@ -53,22 +53,22 @@ export default function AgentOverviewGrid({
         </div>
 
         <div className="fin-stat-card p-4 border rounded-lg bg-card">
-          <span className="text-xs text-muted block">Pipeline Operational Status</span>
-          <strong className="text-xl font-bold text-success block mt-1">
-            {runningCount > 0 ? `${runningCount} Running` : "Healthy & Grounded"}
+          <span className="text-xs text-muted block">Orchestration Mode</span>
+          <strong className="text-xl font-bold text-main block mt-1">
+            {runningCount > 0 ? `${runningCount} Running` : "Client Simulation"}
           </strong>
-          <span className="text-[11px] text-success flex-row items-center gap-1 mt-1 font-semibold">
-            <CheckCircle2 size={12} /> 100% Citation Invariant Verified
+          <span className="text-[11px] text-teal flex-row items-center gap-1 mt-1 font-semibold">
+            <CheckCircle2 size={12} /> In-Browser Diagnostics
           </span>
         </div>
 
         <div className="fin-stat-card p-4 border rounded-lg bg-card">
-          <span className="text-xs text-muted block">Mean Agent Latency</span>
+          <span className="text-xs text-muted block">Benchmark Latency</span>
           <strong className="text-2xl font-bold font-mono text-accent block mt-1">
-            2.4s
+            ~2.4s
           </strong>
           <span className="text-[11px] text-muted block mt-1">
-            Sub-second vector retrieval
+            Simulated pipeline estimate
           </span>
         </div>
 

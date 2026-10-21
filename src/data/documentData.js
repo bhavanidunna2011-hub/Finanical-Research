@@ -281,19 +281,24 @@ export function getStoredDocuments() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         return parsed;
       }
     }
   } catch (e) {
     console.warn("Failed to load documents from localStorage:", e);
   }
+  // If not found or empty, initialize with INITIAL_DOCUMENTS
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_DOCUMENTS));
+  } catch {}
   return INITIAL_DOCUMENTS;
 }
 
 export function saveStoredDocuments(docs) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
+    const toSave = Array.isArray(docs) && docs.length > 0 ? docs : INITIAL_DOCUMENTS;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch (e) {
     console.warn("Failed to save documents to localStorage:", e);
   }

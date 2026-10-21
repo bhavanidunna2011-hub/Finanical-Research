@@ -1,35 +1,66 @@
 import React from "react";
 import {
-  Bot,
+  LayoutDashboard,
+  FolderOpen,
   FileText,
+  Bot,
+  Layers,
   FileCheck2,
+  Cpu,
   TrendingUp,
   ChevronLeft,
-  ChevronRight,
-  Plus
+  ChevronRight
 } from "lucide-react";
 
 export const NAVIGATION_ITEMS = [
   {
-    id: "Research",
-    label: "Research",
-    icon: Bot,
-    description: "Financial AI query & citations",
-    matchPages: ["Research", "Financial Query & Research", "Dashboard", "Research Workspace"]
+    id: "Dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    description: "Overview & recent activity",
+    matchPages: ["Dashboard"]
+  },
+  {
+    id: "Sessions",
+    label: "Research Sessions",
+    icon: FolderOpen,
+    description: "Entity workspaces & objectives",
+    matchPages: ["Sessions", "Research Sessions", "Workspace Directory", "Session Details", "Create Session"]
   },
   {
     id: "Documents",
     label: "Documents",
     icon: FileText,
-    description: "SEC filings & annual reports",
-    matchPages: ["Documents", "Document Library", "Upload Document"]
+    description: "Filings, ingestion & vector search",
+    matchPages: ["Documents", "Document Library", "Upload Document", "Knowledge Base"]
+  },
+  {
+    id: "Research",
+    label: "AI Research",
+    icon: Bot,
+    description: "Conversational query & citations",
+    matchPages: ["Research", "AI Research", "Financial Query & Research"]
+  },
+  {
+    id: "Analysis",
+    label: "Financial Analysis",
+    icon: Layers,
+    description: "Extracted metrics & red flags",
+    matchPages: ["Analysis", "Financial Analysis", "Research Workspace", "Extraction", "Red Flags", "Comparison"]
   },
   {
     id: "Reports",
     label: "Reports",
     icon: FileCheck2,
-    description: "Executive summaries & findings",
+    description: "Executive dossiers & PDF export",
     matchPages: ["Reports", "Research Reports", "Analyst Report"]
+  },
+  {
+    id: "Settings",
+    label: "System & Agents",
+    icon: Cpu,
+    description: "Orchestration & runtime status",
+    matchPages: ["Settings", "Multi-Agent Orchestrator", "Orchestration"]
   }
 ];
 

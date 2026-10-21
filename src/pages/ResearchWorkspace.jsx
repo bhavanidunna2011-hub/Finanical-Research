@@ -50,7 +50,7 @@ export default function ResearchWorkspace({
   initialMode = "directory"
 }) {
   const [workspaceMode, setWorkspaceMode] = useState(initialMode); // "directory" | "details" | "interactive"
-  const [activeTab, setActiveTab] = useState(activeTabOverride || "overview");
+  const [activeTab, setActiveTab] = useState(activeTabOverride || "extraction");
   const [activeCitation, setActiveCitation] = useState(null);
   const [isPipelineRunning, setIsPipelineRunning] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
@@ -334,71 +334,72 @@ export default function ResearchWorkspace({
           </div>
           <div className="quick-stat-box">
             <span className="label">Source Grounding</span>
-            <strong className="text-success">100% Verified</strong>
+            <strong className="text-teal">Audited Filings</strong>
           </div>
         </div>
       </div>
 
-      {/* Workspace Navigation Tabs */}
-      <div className="workspace-tabs-bar">
-        <button
-          className={`tab-btn ${activeTab === "overview" ? "active" : ""}`}
-          onClick={() => setActiveTab("overview")}
-        >
-          <Database size={16} />
-          <span>Overview & Pipeline</span>
-        </button>
+      {/* Workspace Navigation Tabs & Quick Links */}
+      <div className="flex items-center justify-between gap-4 flex-wrap pb-1 border-b border-subtle">
+        <div className="workspace-tabs-bar border-0 p-0 mb-0">
+          <button
+            className={`tab-btn ${activeTab === "extraction" ? "active" : ""}`}
+            onClick={() => setActiveTab("extraction")}
+          >
+            <Layers size={14} />
+            <span>Extracted Financials</span>
+          </button>
 
-        <button
-          className={`tab-btn ${activeTab === "ingestion" ? "active" : ""}`}
-          onClick={() => setActiveTab("ingestion")}
-        >
-          <FileText size={16} />
-          <span>Document & Vector DB</span>
-        </button>
+          <button
+            className={`tab-btn ${activeTab === "redflags" ? "active" : ""}`}
+            onClick={() => setActiveTab("redflags")}
+          >
+            <AlertTriangle size={14} />
+            <span>Forensic Red Flags</span>
+            <span className="fin-badge fin-badge-xs fin-badge-warning ml-1 font-mono">
+              {(primaryCompany.redFlags?.length || 0) + (isComparisonSession ? secondaryCompany.redFlags?.length || 0 : 0)}
+            </span>
+          </button>
 
-        <button
-          className={`tab-btn ${activeTab === "extraction" ? "active" : ""}`}
-          onClick={() => setActiveTab("extraction")}
-        >
-          <Layers size={16} />
-          <span>Extraction Agent</span>
-        </button>
+          <button
+            className={`tab-btn ${activeTab === "comparison" ? "active" : ""}`}
+            onClick={() => setActiveTab("comparison")}
+          >
+            <GitCompare size={14} />
+            <span>Peer Comparison</span>
+          </button>
 
-        <button
-          className={`tab-btn ${activeTab === "redflags" ? "active" : ""}`}
-          onClick={() => setActiveTab("redflags")}
-        >
-          <AlertTriangle size={16} />
-          <span>Red Flag Agent</span>
-          <span className="tab-pill">
-            {(primaryCompany.redFlags?.length || 0) + (isComparisonSession ? secondaryCompany.redFlags?.length || 0 : 0)}
-          </span>
-        </button>
+          <button
+            className={`tab-btn ${activeTab === "overview" ? "active" : ""}`}
+            onClick={() => setActiveTab("overview")}
+          >
+            <Database size={14} />
+            <span>Multi-Agent Pipeline</span>
+          </button>
+        </div>
 
-        <button
-          className={`tab-btn ${activeTab === "comparison" ? "active" : ""}`}
-          onClick={() => setActiveTab("comparison")}
-        >
-          <GitCompare size={16} />
-          <span>Comparison Agent</span>
-        </button>
-
-        <button
-          className={`tab-btn ${activeTab === "research" ? "active" : ""}`}
-          onClick={() => setActiveTab("research")}
-        >
-          <Bot size={16} />
-          <span>Conversational Research</span>
-        </button>
-
-        <button
-          className={`tab-btn ${activeTab === "report" ? "active" : ""}`}
-          onClick={() => setActiveTab("report")}
-        >
-          <Printer size={16} />
-          <span>Analyst Report (PDF)</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {setPage && (
+            <>
+              <button
+                type="button"
+                className="fin-btn fin-btn-secondary fin-btn-xs"
+                onClick={() => setPage("AI Research")}
+              >
+                <Bot size={13} className="mr-1 text-teal" />
+                <span>Ask in AI Research</span>
+              </button>
+              <button
+                type="button"
+                className="fin-btn fin-btn-secondary fin-btn-xs"
+                onClick={() => setPage("Reports")}
+              >
+                <Printer size={13} className="mr-1 text-muted" />
+                <span>Generate Report</span>
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* TAB CONTENT 1: OVERVIEW & PIPELINE */}
@@ -844,36 +845,34 @@ export default function ResearchWorkspace({
             </div>
           </div>
 
-          {/* Interactive Financial Health & Solvency Gauge */}
+          {/* Balance Sheet & Solvency Profile */}
           <div className="health-gauge-banner mt-6">
             <div className="gauge-left">
-              <div className="gauge-circle-outer">
-                <div className="gauge-circle-inner">
-                  <span className="gauge-score">96</span>
-                  <small className="gauge-sub">/100</small>
-                </div>
-              </div>
               <div>
-                <span className="badge badge-success mb-1">Pristine Financial Health</span>
-                <h4>Solvency & Liquidity Rating: AAA Equivalent</h4>
+                <span className="badge badge-accent mb-1">Balance Sheet & Solvency Profile</span>
+                <h4>Audited Capital Structure & Working Capital</h4>
                 <p className="text-xs text-muted mt-1 leading-relaxed">
-                  Zero long-term debt, liquid cash reserves of {primaryCompany.metrics.cashEquivalents}, and 90%+ Free Cash Flow to Net Profit conversion rate.
+                  Extracted from {primaryCompany.name}'s statutory disclosures ({primaryCompany.filingDocName}). Ratios calculated using standard corporate finance formulas.
                 </p>
               </div>
             </div>
 
             <div className="gauge-right">
               <div className="health-metric-row">
-                <span className="text-xs text-muted">Balance Sheet Leverage:</span>
-                <strong className="text-xs text-success">0.00x Debt/Equity (Debt-free)</strong>
+                <span className="text-xs text-muted">Total Debt / Leverage:</span>
+                <strong className="text-xs text-main">{primaryCompany.metrics.totalDebt || "N/A"}</strong>
               </div>
               <div className="health-metric-row">
-                <span className="text-xs text-muted">Working Capital Buffer:</span>
-                <strong className="text-xs text-accent">Current Ratio 2.1x</strong>
+                <span className="text-xs text-muted">Cash & Marketable Assets:</span>
+                <strong className="text-xs text-main">{primaryCompany.metrics.cashEquivalents || "N/A"}</strong>
+              </div>
+              <div className="health-metric-row">
+                <span className="text-xs text-muted">Working Capital (Current Ratio):</span>
+                <strong className="text-xs text-teal">{primaryCompany.metrics.currentRatio || "N/A"}</strong>
               </div>
               <div className="health-metric-row">
                 <span className="text-xs text-muted">Return on Equity (ROE):</span>
-                <strong className="text-xs text-success">{primaryCompany.metrics.roe}</strong>
+                <strong className="text-xs text-main">{primaryCompany.metrics.roe || "N/A"}</strong>
               </div>
             </div>
           </div>
@@ -887,7 +886,7 @@ export default function ResearchWorkspace({
                   Extracted and computed with strict traceability to financial statement notes.
                 </p>
               </div>
-              <span className="badge badge-accent">Grounding Strictness: 100%</span>
+              <span className="badge badge-accent">Source Grounded (SEC / Statutory)</span>
             </div>
 
             <div className="table-responsive">
@@ -1468,8 +1467,8 @@ export default function ResearchWorkspace({
                   <p className="text-xs muted">FinResearch AI • Multi-Agent Financial Research System</p>
                 </div>
                 <div>
-                  <strong>Audit Status:</strong>
-                  <p className="text-xs text-success font-semibold">100% Strict Document Grounding (No LLM Hallucinations)</p>
+                  <strong>Verification Standard:</strong>
+                  <p className="text-xs text-teal font-semibold">Document-Grounded Citations (Source Traceable)</p>
                 </div>
               </div>
               <p className="report-disclaimer">

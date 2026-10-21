@@ -123,7 +123,7 @@ export default function OrchestrationView({
                   sessionId: activeSession?.id || "session-1",
                   sessionTitle: activeSession?.title || "Infosys vs TCS Peer Benchmarking",
                   docRef: "Audited Annual Reports FY24",
-                  evidence: "100% of claims verified against 1536-dim vector store citations."
+                  evidence: "Extracted claims mapped to indexed chunks in vector store citations."
                 };
 
                 setOrchestrationState((prev) => ({
@@ -168,16 +168,13 @@ export default function OrchestrationView({
   return (
     <section className="page fin-orchestration-page animate-fadeIn space-y-6">
       {/* Page Title & Main Header */}
-      <div className="flex-row items-center justify-between pb-4 border-b border-subtle flex-wrap gap-4">
+      <div className="flex items-center justify-between pb-4 border-b border-subtle flex-wrap gap-4">
         <div>
-          <span className="eyebrow text-accent font-mono text-[10px]">
-            MODULE 4: MULTI-AGENT ORCHESTRATION LAYER
-          </span>
-          <h1 className="text-2xl font-bold text-main mt-0.5">
-            Multi-Agent Orchestrator
+          <h1 className="text-xl font-bold text-main">
+            Multi-Agent Orchestrator & System Runtime
           </h1>
-          <p className="text-xs text-muted max-w-2xl mt-1 leading-relaxed">
-            Autonomous coordination, dependency tracking, and execution monitoring across the 6 documented financial research agents.
+          <p className="text-xs text-muted max-w-2xl mt-0.5 leading-relaxed">
+            Execution monitoring, pipeline timeline, and agent coordination across the 6 specialized financial research agents.
           </p>
         </div>
 

@@ -286,27 +286,14 @@ export default function UploadDocument({
           <div>
             <h1 className="text-xl font-bold text-main">Upload Financial Document</h1>
             <p className="text-xs text-muted">
-              Module 2: Ingest audited corporate filings into the multi-agent vector index with citation grounding.
+              Ingest corporate filings into the research library with automated table extraction and vector chunking.
             </p>
           </div>
         </div>
 
-        <Badge variant="teal" size="sm" icon={ShieldCheck}>
-          100% Client-Side Ingestion
+        <Badge variant="outline" size="xs">
+          PDF Format Supported
         </Badge>
-      </div>
-
-      {/* Prominent Demo Notice Banner */}
-      <div className="fin-info-banner mt-4">
-        <div className="flex-row items-start gap-2.5">
-          <Info size={18} className="text-accent shrink-0 mt-0.5" />
-          <div className="text-xs leading-relaxed text-muted">
-            <strong className="text-main block mb-0.5">SIMULATED DEMO ENVIRONMENT</strong>
-            Document extraction, OCR parsing, semantic chunking, and 1536-dimensional vector embedding are simulated
-            locally in-browser for this demonstration. Your original PDF remains intact on your machine and is never
-            transmitted to any unconfigured external backend.
-          </div>
-        </div>
       </div>
 
       {/* Success State View */}

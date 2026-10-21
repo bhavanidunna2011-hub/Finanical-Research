@@ -107,72 +107,28 @@ export default function WorkspaceDirectory({
 
   return (
     <div className="fin-workspace-directory animate-fadeIn">
-      {/* Page Header */}
-      <div className="fin-workspace-hero">
-        <div className="hero-left">
-          <span className="fin-eyebrow">MODULE 1 • WORKSPACE DIRECTORY</span>
-          <h1 className="hero-page-title">Research Workspace</h1>
-          <p className="hero-page-desc">
-            Collaborative multi-agent financial workspace for automated filing extraction, peer benchmarking, forensic risk audits, and institutional session management.
-          </p>
+      {/* Action Bar */}
+      <div className="flex items-center justify-between pb-3 border-b border-subtle flex-wrap gap-3">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-main">
+            Active Workspaces ({filteredSessions.length})
+          </span>
+          <span className="text-xs text-muted">
+            • Configure target entities and scope filings
+          </span>
         </div>
 
-        <div className="hero-right">
+        <div>
           <Button
-            variant="teal"
-            size="md"
+            variant="primary"
+            size="sm"
             icon={PlusCircle}
             onClick={onOpenCreateModal}
           >
-            New Research Session
+            New Session
           </Button>
         </div>
       </div>
-
-      {/* Demo storage disclosure badge */}
-      <div className="fin-storage-notice mt-4">
-        <ShieldCheck size={14} className="text-teal" />
-        <span className="text-xs">
-          <strong>Session Management:</strong> Research sessions are persisted locally in your browser workspace. All financial insights cite audited SEC Form 10-K and Annual Reports.
-        </span>
-      </div>
-
-      {/* Recently Accessed Sessions Bar */}
-      {recentSessions.length > 0 && (
-        <div className="recent-sessions-bar mt-6">
-          <div className="recent-bar-header">
-            <Clock size={14} className="text-muted" />
-            <span className="text-xs font-bold uppercase tracking-wider text-muted">
-              Recently Accessed Sessions
-            </span>
-          </div>
-
-          <div className="recent-chips-grid mt-2">
-            {recentSessions.map((s) => {
-              const isCurrent = activeSession?.id === s.id;
-              return (
-                <div
-                  key={s.id}
-                  className={`recent-session-chip ${isCurrent ? "active" : ""}`}
-                  onClick={() => onViewSessionDetails(s)}
-                  title="Open session details"
-                >
-                  <div className="chip-badge">
-                    {s.companyIds?.[0] || "RES"}
-                  </div>
-                  <div className="chip-content">
-                    <strong className="chip-title truncate">{s.title}</strong>
-                    <span className="chip-sub">
-                      {s.company || "General"} • {s.documents?.length || 1} Doc(s)
-                    </span>
-                  </div>
-                  <ChevronRight size={14} className="chip-arrow text-muted" />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {/* Search & Filter Control Bar */}
       <div className="fin-filter-controls-card mt-6">
