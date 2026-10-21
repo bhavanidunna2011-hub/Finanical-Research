@@ -22,7 +22,8 @@ import {
   List,
   X,
   FileCheck2,
-  Plus
+  Plus,
+  Bot
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import Badge from "../components/ui/Badge";
@@ -566,20 +567,21 @@ export default function DocumentLibrary({
                             <ExternalLink size={13} />
                           </button>
 
-                          {doc.sessionId && (
-                            <button
-                              type="button"
-                              className="fin-btn fin-btn-ghost fin-btn-xs text-teal"
-                              onClick={() => {
-                                const target = sessions.find((s) => s.id === doc.sessionId);
-                                if (target) handleOpenSession(target);
-                                else if (onOpenDocumentSession) onOpenDocumentSession(doc.ticker);
-                              }}
-                              title="Open Associated Research Session"
-                            >
-                              <FolderOpen size={13} />
-                            </button>
-                          )}
+                          <button
+                            type="button"
+                            className="fin-btn fin-btn-ghost fin-btn-xs text-teal font-medium"
+                            onClick={() => {
+                              const target = sessions.find(
+                                (s) => s.id === doc.sessionId || s.companyIds?.includes(doc.ticker)
+                              );
+                              if (target && setActiveSession) setActiveSession(target);
+                              if (setPage) setPage("Research");
+                            }}
+                            title="Research this document with AI"
+                          >
+                            <Bot size={13} className="mr-1" />
+                            <span>Ask AI</span>
+                          </button>
 
                           {!doc.isSeed && (
                             <button

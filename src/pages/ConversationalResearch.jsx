@@ -53,7 +53,7 @@ export default function ConversationalResearch({
         if (Array.isArray(parsed)) return parsed;
       }
     } catch {}
-    return [];
+    return INITIAL_DOCUMENTS;
   });
 
   // Active documents in research scope for this session
@@ -314,98 +314,34 @@ export default function ConversationalResearch({
 
   return (
     <div className="fin-research-chat-page animate-fadeIn">
-      {/* Top Session & Simulation Controls Toolbar */}
-      <div className="fin-chat-top-toolbar">
-        <div className="flex-row items-center gap-3">
-          <div className="chat-page-badge-icon">
+      {/* Clean Minimal Header Bar */}
+      <div className="fin-chat-top-toolbar flex items-center justify-between py-3 px-4 border-b border-subtle">
+        <div className="flex items-center gap-3">
+          <div className="chat-page-badge-icon w-9 h-9 rounded-lg bg-teal/10 flex items-center justify-center">
             <Bot size={20} className="text-teal" />
           </div>
           <div>
-            <div className="flex-row items-center gap-2">
-              <h1 className="text-lg font-bold text-main leading-tight">
-                Financial Query & Conversational Research
-              </h1>
-              <span className="fin-badge fin-badge-teal fin-badge-xs">Module 5</span>
-              <span className="fin-badge fin-badge-purple fin-badge-xs">
-                {isDemoMode ? "Demo Mode" : "API Ready"}
-              </span>
-            </div>
+            <h1 className="text-base font-bold text-main leading-tight">
+              Financial Research Assistant
+            </h1>
             <p className="text-xs text-muted mt-0.5">
-              Grounded in audited SEC Form 10-K & Annual Reports • Multi-step reasoning • Exact page citations
+              Ask deep questions across balance sheets, P&L statements, and footnote disclosures.
             </p>
           </div>
         </div>
 
-        {/* Quick Simulation Action Buttons */}
-        <div className="simulation-actions-group">
+        {/* Minimal Action: Clear Chat */}
+        {messages.length > 0 && (
           <button
             type="button"
-            className="fin-btn fin-btn-secondary fin-btn-xs"
-            onClick={() => setIsDemoMode(!isDemoMode)}
-            title={isDemoMode ? "Demo Mode is active (using simulated responses)" : "Demo Mode is off"}
-          >
-            <span
-              style={{
-                width: 7,
-                height: 7,
-                borderRadius: "50%",
-                background: isDemoMode ? "#a855f7" : "#64748b",
-                display: "inline-block",
-                marginRight: 6
-              }}
-            />
-            <span>{isDemoMode ? "Demo Mode: Active" : "Demo Mode: Off"}</span>
-          </button>
-
-          <button
-            type="button"
-            className="fin-btn fin-btn-secondary fin-btn-xs"
-            onClick={handleSimulateLiveReasoning}
-            title="Pre-fills a financial research question"
-          >
-            <Sparkles size={12} className="text-teal mr-1" />
-            <span>Load Prompt</span>
-          </button>
-
-          <button
-            type="button"
-            className="fin-btn fin-btn-secondary fin-btn-xs"
-            onClick={handleSimulateError}
-            title="Demonstrate error state handling"
-          >
-            <AlertTriangle size={12} className="text-warning mr-1" />
-            <span>Simulate Error</span>
-          </button>
-
-          <button
-            type="button"
-            className="fin-btn fin-btn-secondary fin-btn-xs"
-            onClick={handleSimulateEmptyState}
-            title="Show empty conversation state"
-          >
-            <span>Empty State</span>
-          </button>
-
-          <button
-            type="button"
-            className="fin-btn fin-btn-secondary fin-btn-xs"
+            className="fin-btn fin-btn-secondary fin-btn-xs text-muted hover:text-danger hover:border-danger/40 transition-colors"
             onClick={handleClearChat}
-            title="Clear message history for current research session"
+            title="Clear conversation history"
           >
-            <Trash2 size={12} className="mr-1" />
+            <Trash2 size={13} className="mr-1" />
             <span>Clear Chat</span>
           </button>
-
-          <button
-            type="button"
-            className="fin-btn fin-btn-secondary fin-btn-xs"
-            onClick={handleResetDemo}
-            title="Restore rich default demonstration thread"
-          >
-            <RotateCcw size={12} className="mr-1" />
-            <span>Reset Demo</span>
-          </button>
-        </div>
+        )}
       </div>
 
       {/* Main Two-Panel Workspace Grid */}
@@ -414,21 +350,15 @@ export default function ConversationalResearch({
             MAIN PANEL: CONVERSATIONAL RESEARCH STREAM & INPUT AREA
            ========================================================================= */}
         <main className="fin-chat-main-panel">
-          {/* Active Documents Notice Strip */}
-          <div className="chat-scope-banner">
-            <div className="flex-row items-center gap-2">
+          {/* Subtle Grounding Scope Indicator */}
+          <div className="flex items-center justify-between px-4 py-2 border-b border-subtle bg-subtle/30 text-xs">
+            <div className="flex items-center gap-2 text-muted">
               <ShieldCheck size={14} className="text-teal" />
-              <span className="text-xs font-semibold text-main">
-                Zero-Hallucination Grounding Standard:
-              </span>
-              <span className="text-xs text-muted">
-                Answers are synthesized strictly from {selectedDocIds.length} active documents.
-              </span>
+              <span>Answers synthesized from <strong className="text-main font-semibold">{selectedDocIds.length} active filings</strong></span>
             </div>
-
-            <span className="text-[11px] font-mono text-teal">
-              Confidence Floor: &gt; 90%
-            </span>
+            {selectedDocIds.length === 0 && (
+              <span className="text-warning text-xs font-medium">Select a document in the side panel</span>
+            )}
           </div>
 
           {/* Messages Stream Container */}

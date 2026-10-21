@@ -1,90 +1,95 @@
 import React from "react";
 import {
-  LayoutDashboard,
-  FlaskConical,
-  FolderOpen,
-  Database,
-  Cpu,
+  Bot,
+  FileText,
   FileCheck2,
-  PlusCircle,
   TrendingUp,
-  ShieldCheck,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
-  Bot
+  Plus
 } from "lucide-react";
 
-const menuItems = [
-  { label: "Dashboard", icon: LayoutDashboard, badge: null, description: "Overview & metrics" },
-  { label: "Financial Query & Research", icon: Bot, badge: null, description: "Conversational RAG" },
-  { label: "Research Workspace", icon: FlaskConical, badge: null, description: "Interactive analysis" },
-  { label: "Document Library", icon: FolderOpen, badge: null, description: "Financial documents" },
-  { label: "Knowledge Base", icon: Database, badge: null, description: "Embeddings & retrieval" },
-  { label: "Multi-Agent Orchestrator", icon: Cpu, badge: null, description: "Pipeline status" },
-  { label: "Research Reports", icon: FileCheck2, badge: null, description: "Dossiers & PDF Export" },
-  { label: "Create Session", icon: PlusCircle, badge: null, description: "New research run" }
+export const NAVIGATION_ITEMS = [
+  {
+    id: "Research",
+    label: "Research",
+    icon: Bot,
+    description: "Financial AI query & citations",
+    matchPages: ["Research", "Financial Query & Research", "Dashboard", "Research Workspace"]
+  },
+  {
+    id: "Documents",
+    label: "Documents",
+    icon: FileText,
+    description: "SEC filings & annual reports",
+    matchPages: ["Documents", "Document Library", "Upload Document"]
+  },
+  {
+    id: "Reports",
+    label: "Reports",
+    icon: FileCheck2,
+    description: "Executive summaries & findings",
+    matchPages: ["Reports", "Research Reports", "Analyst Report"]
+  }
 ];
 
-export default function Sidebar({ activePage, setPage, collapsed, onToggleCollapse }) {
+export default function Sidebar({
+  activePage,
+  setPage,
+  collapsed,
+  onToggleCollapse,
+  onNewResearch
+}) {
   return (
     <aside className={`fin-sidebar ${collapsed ? "collapsed" : ""}`}>
-      {/* Brand Header */}
+      {/* Sleek Minimal Brand */}
       <div
         className="fin-brand"
-        onClick={() => setPage("Dashboard")}
-        title={collapsed ? "FinResearch AI" : undefined}
+        onClick={() => setPage("Research")}
+        title={collapsed ? "FinResearch" : undefined}
       >
         <div className="fin-brand-icon">
-          <TrendingUp size={20} color="#ffffff" />
+          <TrendingUp size={19} color="#ffffff" />
         </div>
         {!collapsed && (
           <div className="fin-brand-text">
-            <h2>FinResearch AI</h2>
-            <p>Multi-Agent Financial Core</p>
+            <h2>FinResearch</h2>
+            <p>AI Financial Analyst</p>
           </div>
         )}
       </div>
 
-      {/* Navigation Group */}
+      {/* Primary 3-Section Navigation */}
       <div className="fin-sidebar-section">
-        {!collapsed && <p className="fin-menu-heading">ANALYTICS MODULES</p>}
+        {!collapsed && <p className="fin-menu-heading">NAVIGATION</p>}
         <nav className="fin-nav">
-          {menuItems.map((item) => {
+          {NAVIGATION_ITEMS.map((item) => {
             const IconComponent = item.icon;
-            const isActive =
-              activePage === item.label ||
-              (item.label === "Research Reports" && activePage === "Analyst Report") ||
-              (item.label === "Analyst Report" && activePage === "Research Reports");
+            const isActive = item.matchPages.includes(activePage);
+
             return (
               <button
-                key={item.label}
+                key={item.id}
                 type="button"
                 className={`fin-nav-item ${isActive ? "active" : ""}`}
-                onClick={() => setPage(item.label)}
-                title={collapsed ? `${item.label} - ${item.description}` : undefined}
+                onClick={() => setPage(item.id)}
+                title={collapsed ? `${item.label} — ${item.description}` : undefined}
                 aria-current={isActive ? "page" : undefined}
               >
                 <span className="fin-nav-icon">
                   <IconComponent size={18} />
                 </span>
                 {!collapsed && (
-                  <>
-                    <span className="fin-nav-label">{item.label}</span>
-                    {item.badge && (
-                      <span className={`fin-nav-badge ${isActive ? "fin-nav-badge-active" : ""}`}>
-                        {item.badge}
-                      </span>
-                    )}
-                  </>
+                  <div className="flex flex-col text-left">
+                    <span className="fin-nav-label font-medium">{item.label}</span>
+                    <span className="text-[10px] text-muted leading-tight">{item.description}</span>
+                  </div>
                 )}
               </button>
             );
           })}
         </nav>
       </div>
-
-
 
       {/* Collapse Toggle Footer */}
       <div className="fin-sidebar-footer">
@@ -95,7 +100,9 @@ export default function Sidebar({ activePage, setPage, collapsed, onToggleCollap
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? <ChevronRight size={16} /> : (
+          {collapsed ? (
+            <ChevronRight size={16} />
+          ) : (
             <>
               <ChevronLeft size={16} />
               <span className="text-xs ml-1.5">Collapse Menu</span>

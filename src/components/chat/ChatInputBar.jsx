@@ -91,25 +91,16 @@ export default function ChatInputBar({
           </button>
         </div>
 
-        {/* Footer Hints */}
-        <div className="chat-input-footer-bar">
-          <div className="flex-row items-center gap-2 text-[11px] text-muted">
-            <span className="flex-row items-center gap-1">
-              <CornerDownLeft size={11} />
-              <span>Press <strong>Enter ↵</strong> to submit</span>
-            </span>
+        {/* Clean Footer Hints */}
+        <div className="chat-input-footer-bar flex items-center justify-between mt-1 px-1">
+          <div className="flex items-center gap-2 text-[11px] text-muted">
+            <span>Press <kbd className="px-1 py-0.5 rounded bg-subtle text-[10px]">Enter ↵</kbd> to submit</span>
             <span>•</span>
-            <span><strong>Shift + Enter</strong> for new line</span>
+            <span><kbd className="px-1 py-0.5 rounded bg-subtle text-[10px]">Shift + Enter</kbd> for new line</span>
           </div>
 
-          <div className="flex-row items-center gap-2 text-[11px]">
-            <span className="text-muted">
-              Retrieval Scope: <strong className="text-teal">{selectedDocCount} filings active</strong>
-            </span>
-            <span>•</span>
-            <span className="text-muted">
-              Mode: <strong className="text-purple-400">Deterministic Client Simulation</strong>
-            </span>
+          <div className="text-[11px] text-muted">
+            Scope: <span className="text-teal font-medium">{selectedDocCount} documents active</span>
           </div>
         </div>
       </form>

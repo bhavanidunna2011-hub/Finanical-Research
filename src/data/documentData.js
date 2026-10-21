@@ -288,7 +288,7 @@ export function getStoredDocuments() {
   } catch (e) {
     console.warn("Failed to load documents from localStorage:", e);
   }
-  return [];
+  return INITIAL_DOCUMENTS;
 }
 
 export function saveStoredDocuments(docs) {
